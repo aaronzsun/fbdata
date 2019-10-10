@@ -24,6 +24,7 @@ final_data_messages = {}
 final_data_times = {}
 final_data_words = {}
 final_data_laugh = {}
+final_data_profanity = {}
 final_data_dayofweek = {}
 invalid_message_count = 0
 
@@ -47,6 +48,7 @@ for i, (messages, chat, messages) in enumerate(sorted_chats):
     person_to_times = {}
     number_words = {}
     laugh_meter = {}
+    profanity_meter = {}
     number_each_day = {"Mon":0,"Tues":0,"Wed":0,"Thurs":0,"Fri":0,"Sat":0,"Sun":0}
 
     print(str(i) + " - " + str(len(messages)) + " messages - " + str(chat))
@@ -57,6 +59,7 @@ for i, (messages, chat, messages) in enumerate(sorted_chats):
             time = message["timestamp_ms"]
             message_content = message["content"].lower()
             day = datetime.datetime.fromtimestamp(time/1000.0).weekday()
+            
             if day == 0:
                 day = "Mon"
             if day == 1:
@@ -88,6 +91,13 @@ for i, (messages, chat, messages) in enumerate(sorted_chats):
             laugh_meter[name] += message_content.count("lel")
             laugh_meter[name] += message_content.count("lul")
             
+            profanity_meter[name] = profanity_meter.get(name, 0)
+            profanity_meter[name] += message_content.count("fuck") # sorry you had to see these curse words
+            profanity_meter[name] += message_content.count("shit") # i don't condone the use of these
+            profanity_meter[name] += message_content.count("bitch")
+            profanity_meter[name] += message_content.count("ass")
+            profanity_meter[name] += message_content.count("damn")
+            
             number_each_day[day] = number_each_day.get(day, 0)
             number_each_day[day] += 1
                              
@@ -99,6 +109,7 @@ for i, (messages, chat, messages) in enumerate(sorted_chats):
     final_data_times[i] = person_to_times
     final_data_words[i] = number_words
     final_data_laugh[i] = laugh_meter
+    final_data_profanity[i] = profanity_meter
     final_data_dayofweek[i] = number_each_day
     
 
@@ -153,6 +164,17 @@ def plot_histogram_laughter(chat_number):
     pl.tight_layout()
     pl.show()
     
+def plot_histogram_profanity(chat_number):
+    plotted_data = final_data_profanity[chat_number]
+    X = np.arange(len(plotted_data))
+    pl.bar(X, list(plotted_data.values()), align='center', width=0.5, color = 'r', bottom = 0.3)
+    pl.xticks(X, plotted_data.keys(), rotation = 90)
+    pl.title('Profanity Meter')
+    pl.xlabel('Person')
+    pl.ylabel('Number of Bad Words')
+    pl.tight_layout()
+    pl.show()
+    
 def plot_histogram_dayofweek(chat_number):
     plotted_data = final_data_dayofweek[chat_number]
     X = np.arange(len(plotted_data))
@@ -169,8 +191,8 @@ def plot(chat_number):
     plot_histogram_time(chat_number)
     plot_histogram_words(chat_number)
     plot_histogram_laughter(chat_number)
+    plot_histogram_profanity(chat_number)
     plot_histogram_dayofweek(chat_number)
-    
-#change number for different chats
-plot(0)
+
+# CHANGE THIS NUMBER TO ANALYZE DIFFERENT CHATS
 plot(0)
