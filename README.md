@@ -1,2 +1,2 @@
 # fbdata
-Analyzes Facebook data in python
+Python scripts to analyze chat & message data from Facebook Messenger
